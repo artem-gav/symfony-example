@@ -27,13 +27,11 @@ class ProductRepository extends ServiceEntityRepository
     public function getListProducts($page = 1) {
         $paginator = $this->container->get('knp_paginator');
 
-        dump($page);
-
         $query = $this->createQueryBuilder('p')
             ->setMaxResults(10)
             ->addOrderBy('p.id', 'DESC')
             ->getQuery();
 
-        return $paginator->paginate($query, $page, 1);
+        return $paginator->paginate($query, $page, 5);
     }
 }

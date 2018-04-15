@@ -9,7 +9,7 @@ use App\Entity\Product;
 class ProductController extends Controller
 {
     /**
-     * @Route("/product/{page}", name="product", requirements={"page"="\d+"})
+     * @Route("/{page}", name="product", requirements={"page"="\d+"})
      */
     public function index($page = 1)
     {
@@ -17,8 +17,6 @@ class ProductController extends Controller
             ->getDoctrine()
             ->getRepository(Product::class)
             ->getListProducts($page);
-
-        dump($products);
 
         return $this->render('product/index.html.twig', [
             'controller_name' => 'ProductController',
