@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Swift_Mailer;
+use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,6 +12,13 @@ use App\Entity\Product;
 
 class AdminProductController extends Controller
 {
+    private $mailer;
+
+    public function __construct(Swift_Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
     /**
      * @Route("/admin/new-product", name="admin_new_product")
      * @param Request $request
@@ -46,6 +55,16 @@ class AdminProductController extends Controller
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($product);
             $entityManager->flush();
+
+            $title = $form["title"]->getData();
+            $message = (new Swift_Message("New product: $title"))
+                ->setFrom('send@example.com')
+                ->setTo('fake@example.com')
+                ->setBody(
+                    $this->renderView('email/email.html.twig', compact('product'))
+                )
+            ;
+            $this->mailer->send($message);
 
             return $this->redirectToRoute('product');
         }
